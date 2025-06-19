@@ -1,4 +1,4 @@
-from checkmate import chekmate
+from checkmate import checkmate
 
 def main():
     board = """\
