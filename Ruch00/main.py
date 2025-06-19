@@ -1,4 +1,3 @@
-'''Main file'''
 from checkmate import chekmate
 
 def main():
