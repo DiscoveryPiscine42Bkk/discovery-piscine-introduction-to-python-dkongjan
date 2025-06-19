@@ -7,6 +7,6 @@ def main():
 ....
 .R..\
 """
-    chekmate(board)
+    checkmate(board)
 if __name__ == "__main__":
     main()
