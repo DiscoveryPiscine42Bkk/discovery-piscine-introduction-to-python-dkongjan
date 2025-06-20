@@ -1,17 +1,10 @@
-def checkmate(board_str: str):
-    board = [list(row) for row in board_str.strip().split('\n')]
-    size = len(board)
+def is_king_in_check(*rows):
+    board = [list(row) for row in rows]
+    n = len(board)
 
-    # Check if board is a square
-    for row in board:
-        if len(row) != size:
-            print("Error: Board is not square")
-            return
-
-    # Find King
     king_pos = None
-    for i in range(size):
-        for j in range(len(board[i])):
+    for i in range(n):
+        for j in range(n):
             if board[i][j] == 'K':
                 king_pos = (i, j)
                 break
@@ -19,67 +12,70 @@ def checkmate(board_str: str):
             break
 
     if not king_pos:
-        print("Error: King not found")
+        print("Fail") 
         return
 
-    # Check for attacks
-    if (
-        is_pawn_attacking(board, king_pos, size) or
-        is_bishop_attacking(board, king_pos, size) or
-        is_rook_attacking(board, king_pos, size)
-    ):
-        print("Success")
-    else:
-        print("Fail")
+    ki, kj = king_pos
 
-def in_bounds(x, y, board, size):
-    return 0 <= x < size and 0 <= y < len(board[x])
+    def on_board(x, y):
+        return 0 <= x < n and 0 <= y < n
 
-def is_pawn_attacking(board, king_pos, size):
-    x, y = king_pos
-    for dx, dy in [(-1, -1), (-1, 1)]:
-        nx, ny = x + dx, y + dy
-        if in_bounds(nx, ny, board, size) and board[nx][ny] == 'P':
-            return True
-    return False
+    def check_linear(dx, dy, threats):
+        x, y = ki + dx, kj + dy
+        while on_board(x, y):
+            if board[x][y] == '.':
+                x += dx
+                y += dy
+                continue
+            return board[x][y] in threats
+        return False
 
-def is_bishop_attacking(board, king_pos, size):
-    x, y = king_pos
-    for dx, dy in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:
-        nx, ny = x + dx, y + dy
-        while in_bounds(nx, ny, board, size):
-            piece = board[nx][ny]
-            if piece == '.':
-                nx += dx
-                ny += dy
-            elif piece == 'B' or piece == 'Q':
+    def check_knight():
+        moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
+                 (1, -2), (1, 2), (2, -1), (2, 1)]
+        for dx, dy in moves:
+            x, y = ki + dx, kj + dy
+            if on_board(x, y) and board[x][y] == 'N':
                 return True
-            else:
-                break
-    return False
+        return False
 
-def is_rook_attacking(board, king_pos, size):
-    x, y = king_pos
+    def check_pawn():
+        for dx, dy in [(-1, -1), (-1, 1)]:
+            x, y = ki + dx, kj + dy
+            if on_board(x, y) and board[x][y] == 'P':
+                return True
+        return False
+
+    
     for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-        nx, ny = x + dx, y + dy
-        while in_bounds(nx, ny, board, size):
-            piece = board[nx][ny]
-            if piece == '.':
-                nx += dx
-                ny += dy
-            elif piece == 'R' or piece == 'Q':
-                return True
-            else:
-                break
-    return False
+        if check_linear(dx, dy, ['R', 'Q']):
+            print("Success")
+            return
 
-if __name__ == "__main__":
-    board = """
-.......
-.......
-....K..
-....P..
-.......
-.......
-......."""
-    checkmate(board)
+    
+    for dx, dy in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:
+        if check_linear(dx, dy, ['B', 'Q']):
+            print("Success")
+            return
+
+    
+    if check_knight():
+        print("Success")
+        return
+
+    
+    if check_pawn():
+        print("Success")
+        return
+
+    print("Fail")
+    
+is_king_in_check(
+    ".......",
+    "...Q...",
+    ".......",
+    "...K...",
+    ".......",
+    ".......",
+    "......."
+)
