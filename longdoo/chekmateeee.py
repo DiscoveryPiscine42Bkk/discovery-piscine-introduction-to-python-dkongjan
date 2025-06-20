@@ -2,7 +2,6 @@ def is_king_in_check(*rows):
     board = [list(row) for row in rows]
     n = len(board)
 
-    # ค้นหาตำแหน่ง King
     king_pos = None
     for i in range(n):
         for j in range(n):
@@ -47,30 +46,30 @@ def is_king_in_check(*rows):
                 return True
         return False
 
-    # ตรวจแนวตรงและแนวนอน
+    
     for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
         if check_linear(dx, dy, ['R', 'Q']):
             print("Success")
             return
 
-    # ตรวจแนวทแยง
+    
     for dx, dy in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:
         if check_linear(dx, dy, ['B', 'Q']):
             print("Success")
             return
 
-    # ตรวจม้า
+    
     if check_knight():
         print("Success")
         return
 
-    # ตรวจเบี้ย
+    
     if check_pawn():
         print("Success")
         return
 
     print("Fail")
-    # เรียกใช้งานฟังก์ชัน พร้อมใส่กระดานหมากรุกที่ต้องการตรวจ
+    
 is_king_in_check(
     ".......",
     "...Q...",
